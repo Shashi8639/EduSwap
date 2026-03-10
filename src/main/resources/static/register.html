@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .avatar-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .avatar-option {
+            cursor: pointer;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            transition: all 0.3s;
+            padding: 5px;
+            background: white;
+        }
+        .avatar-option:hover {
+            transform: scale(1.1);
+        }
+        .avatar-option.selected {
+            border-color: #21808d;
+            box-shadow: 0 0 15px rgba(33, 128, 141, 0.5);
+        }
+        .avatar-option img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+    </style>
+    <script>
+        let selectedAvatarId = null;
+        
+        // Load avatars from backend
+        async function loadAvatars() {
+            try {
+                const resp = await fetch('/avatars');
+                const avatars = await resp.json();
+                const grid = document.getElementById('avatarGrid');
+                
+                avatars.forEach(avatar => {
+                    const div = document.createElement('div');
+                    div.className = 'avatar-option';
+                    div.innerHTML = `<img src="${avatar.imageUrl}" alt="${avatar.name}" title="${avatar.name}">`;
+                    div.onclick = () => selectAvatar(avatar.id, div);
+                    grid.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Failed to load avatars:', error);
+            }
+        }
+        
+        // Select avatar
+        function selectAvatar(id, element) {
+            selectedAvatarId = id;
+            document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        
+        // Register user with avatar
+        async function registerUser(event) {
+            event.preventDefault();
+            
+            // Check if avatar is selected
+            if (!selectedAvatarId) {
+                alert('Please select an avatar!');
+                return;
+            }
+            
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const email = document.getElementById("email").value;
+            const type = 1;
+            
+            const user = {
+                username, password, type, email,
+                avatar: { id: selectedAvatarId }, // Include avatar
+                isVerified: true,
+                creationDate: new Date().toISOString(),
+                lastLogin: new Date().toISOString(),
+                isEnabled: true
+            };
+            
+            const resp = await fetch("/users", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(user)
+            });
+            
+            if (resp.ok) {
+                alert("Registration successful! Now add account info.");
+                window.location = "addAccountInfo.html?username=" + encodeURIComponent(username);
+            } else {
+                alert("Error: Registration failed. Username may already exist.");
+            }
+        }
+        
+        // Load avatars when page loads
+        window.onload = loadAvatars;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>User Registration</h2>
+        <form onsubmit="registerUser(event)">
+            
+            <!-- Avatar Selection Section -->
+            <div class="avatar-section">
+                <h3>Choose Your Avatar</h3>
+                <div id="avatarGrid" class="avatar-grid"></div>
+            </div>
+            
+            <!-- User Details -->
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="email" id="email" placeholder="Email" required>
+            
+            <button type="submit" class="btn">Register</button>
+            <a href="index.html" class="btn">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Listing</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function getParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+        async function submitListing(event) {
+            event.preventDefault();
+            const username = getParam("username") || document.getElementById("username").value;
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const image = document.getElementById('image').value;
+            const listing = {title, description, price, image};
+            const resp = await fetch(`/listings/users/${username}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(listing)
+            });
+            if (resp.ok) {
+                alert('Listing added!');
+                window.location = 'listings.html';
+            } else {
+                alert('Something went wrong!');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Add a Listing</h2>
+        <form onsubmit="submitListing(event)">
+            <input type="text" id="username" placeholder="Your Username"><br><br>
+            <input type="text" id="title" placeholder="Title" required><br><br>
+            <input type="text" id="description" placeholder="Description" required><br><br>
+            <input type="text" id="price" placeholder="Price" required><br><br>
+            <input type="text" id="image" placeholder="Image URL or ID"><br><br>
+            <button type="submit" class="btn">Add</button>
+            <a href="listings.html" class="btn">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

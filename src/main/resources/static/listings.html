@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marketplace Listings</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        async function loadListings() {
+            const resp = await fetch('/listings');
+            const container = document.getElementById('listingBox');
+            if (!resp.ok) {
+                container.innerHTML = "<div>No listings found (API error).</div>";
+                return;
+            }
+            const data = await resp.json();
+            if (!Array.isArray(data) || data.length === 0) {
+                container.innerHTML = "<div>No listings yet. Be the first to add one!</div>";
+            } else {
+                container.innerHTML = '';
+                data.forEach(item => {
+                    container.innerHTML += `<div class="info">
+                      <b>${item.title}</b><br>
+                      Description: ${item.description}<br>
+                      Price: ${item.price}<br>
+                      <button onclick="buy(${item.id}, '${item.title}')">Buy</button>
+                    </div>`;
+                });
+            }
+        }
+
+        function buy(listingId, title) {
+            alert(`Simulating buy for item: ${title} (ID: ${listingId})`);
+            // See previous for how to POST a transaction
+        }
+
+        window.onload = loadListings;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Marketplace Listings</h2>
+        <!-- The add listing button is always visible -->
+        <a href="addListing.html" class="btn">Add a Listing</a>
+        <div id="listingBox"></div>
+        <a href="index.html" class="btn">Back</a>
+    </div>
+</body>
+</html>

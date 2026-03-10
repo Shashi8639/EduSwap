@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Personal Chat</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    async function sendMessage(event) {
+      event.preventDefault();
+      const sender = document.getElementById("sender").value;
+      const receiver = document.getElementById("receiver").value;
+      const subject = document.getElementById("subject").value;
+      const timestamp = new Date().toISOString();
+      // Construct message object
+      const message = {sender, receiver, subject, timestamp};
+      // POST to /messages (make sure you have this endpoint in your backend)
+      const resp = await fetch("/messages", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(message)
+      });
+      if (resp.ok) {
+        alert("Message Sent!");
+      } else {
+        alert("Error sending message.");
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>Personal Chat (Send Message)</h2>
+    <form onsubmit="sendMessage(event)">
+      <input type="text" id="sender" placeholder="Your Username" required><br><br>
+      <input type="text" id="receiver" placeholder="Receiver Username" required><br><br>
+      <input type="text" id="subject" placeholder="Message" required><br><br>
+      <button type="submit" class="btn">Send</button>
+      <a href="index.html" class="btn">Cancel</a>
+	  
+    </form>
+  </div>
+</body>
+</html>

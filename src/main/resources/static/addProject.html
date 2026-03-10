@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Project/Idea</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+        .form-control, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn {
+            padding: 12px 24px;
+            background: #21808d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .btn:hover { background: #1a6873; }
+        .btn-secondary {
+            background: #666;
+        }
+        .btn-secondary:hover { background: #555; }
+    </style>
+    <script>
+        async function submitProject(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const id = Date.now(); // Unique ID
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const category = document.getElementById('category').value;
+            const projectFilePath = document.getElementById('projectFile').value;
+            const demoVideoUrl = document.getElementById('demoVideo').value;
+            
+            const listing = {
+                id, title, description, price,
+                category, projectFilePath, demoVideoUrl,
+                isPurchased: false
+            };
+            
+            const resp = await fetch(`/listings/users/${username}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(listing)
+            });
+            
+            if (resp.ok) {
+                alert('Project listed successfully!');
+                window.location = 'marketplace.html';
+            } else {
+                alert('Failed to list project! Make sure username exists.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>📁 Upload Your Project/Idea</h2>
+        <form onsubmit="submitProject(event)">
+            <input type="text" id="username" class="form-control" placeholder="Your Username" required>
+            <input type="text" id="title" class="form-control" placeholder="Project Title" required>
+            <textarea id="description" placeholder="Detailed Project Description" required></textarea>
+            <input type="number" id="price" class="form-control" placeholder="Price (₹)" min="0" required>
+            <select id="category" required>
+                <option value="">-- Select Category --</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Mobile App">Mobile App</option>
+                <option value="AI/ML">AI/ML</option>
+                <option value="Blockchain">Blockchain</option>
+                <option value="IoT">IoT</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Game Development">Game Development</option>
+                <option value="Other">Other</option>
+            </select>
+            <input type="url" id="projectFile" class="form-control" placeholder="Project File URL (Google Drive, Dropbox, etc.)" required>
+            <input type="url" id="demoVideo" class="form-control" placeholder="Demo Video URL (YouTube, Vimeo - Optional)">
+            
+            <button type="submit" class="btn">Upload Project</button>
+            <a href="marketplace.html" class="btn btn-secondary" style="text-decoration: none;">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

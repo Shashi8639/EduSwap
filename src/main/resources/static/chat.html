@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EduSwap Global Chat</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Global Chat</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <button onclick="connect();">Connect</button>
+    <div>
+      <textarea readonly id="log" rows="10" cols="60"></textarea>
+    </div>
+    <div>
+      <input type="text" id="msg" placeholder="Message" />
+      <button onclick="send();">Send</button>
+    </div>
+    <a href="index.html" class="btn">Back</a>
+  </div>
+  <script src="websocket.js"></script>
+</body>
+</html>

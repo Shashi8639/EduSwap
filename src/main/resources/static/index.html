@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Marketplace - Buy & Sell Ideas</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #21808d, #1a6873);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin: 0 0 15px 0;
+        }
+        .hero p {
+            font-size: 20px;
+            margin: 0;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .feature-card h3 {
+            font-size: 24px;
+            margin: 15px 0;
+            color: #333;
+        }
+        .feature-card p {
+            color: #666;
+            margin: 10px 0 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #21808d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 5px;
+            transition: background 0.2s;
+            font-weight: 500;
+        }
+        .btn:hover {
+            background: #1a6873;
+        }
+        .btn--primary {
+            background: #21808d;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .action-links {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🚀 Project Marketplace</h1>
+            <p>Buy, Sell, and Collaborate on Amazing Project Ideas</p>
+        </div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>👤 Register</h3>
+                <p>Create your account with a cool avatar</p>
+                <a href="register.html" class="btn btn--primary">Get Started</a>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🛒 Browse Projects</h3>
+                <p>Explore innovative ideas and projects</p>
+                <a href="marketplace.html" class="btn">Explore</a>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📁 Upload Project</h3>
+                <p>Sell your ideas and earn money</p>
+                <a href="addProject.html" class="btn">Upload</a>
+            </div>
+            
+            <div class="feature-card">
+                <h3>💬 Global Chat</h3>
+                <p>Connect with the community</p>
+                <a href="chat.html" class="btn">Join Chat</a>
+            </div>
+        </div>
+        
+        <div class="action-links">
+            <h3>Quick Actions</h3>
+            <a href="addPaymentInfo.html" class="btn">💳 Add Payment Info</a>
+            <a href="my-purchases.html" class="btn">📦 My Purchases</a>
+            <a href="listings.html" class="btn">📋 All Listings</a>
+            <a href="addListing.html" class="btn">➕ Add Listing</a>
+        </div>
+    </div>
+</body>
+</html>

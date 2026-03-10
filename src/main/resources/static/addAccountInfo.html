@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Account Info</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function getParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+        async function submitForm(event) {
+            event.preventDefault();
+            const username = getParam("username") || document.getElementById("username").value;
+            const fname = document.getElementById("fname").value;
+            const lname = document.getElementById("lname").value;
+            const pictureId = document.getElementById("pictureId").value;
+            const birthDate = document.getElementById("birthDate").value;
+            const accountInfo = {fname, lname, pictureId: parseInt(pictureId), birthDate};
+            // POST to /accountInfos
+            const resp = await fetch("/accountInfos", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(accountInfo)
+            });
+            if (resp.ok) {
+                alert("Account Info Added! Now add listings.");
+                window.location = "addListing.html?username=" + encodeURIComponent(username);
+            } else {
+                alert("Failed to add account info.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Add Account Info</h2>
+        <form onsubmit="submitForm(event)">
+            <!-- Only show username field if NOT redirected from registration -->
+            <input type="text" id="username" placeholder="Your Username"><br><br>
+            <input type="text" id="fname" placeholder="First Name" required><br><br>
+            <input type="text" id="lname" placeholder="Last Name" required><br><br>
+            <input type="number" id="pictureId" placeholder="Picture ID" required><br><br>
+            <input type="date" id="birthDate" placeholder="Birth Date" required><br><br>
+            <button type="submit" class="btn">Save</button>
+            <a href="index.html" class="btn">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

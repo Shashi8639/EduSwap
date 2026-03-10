@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Purchases</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .purchase-card {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+        }
+        .purchase-card h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin: 5px 5px 5px 0;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .btn {
+            padding: 12px 24px;
+            background: #21808d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 5px;
+            font-weight: 500;
+        }
+        .btn:hover { background: #1a6873; }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+        }
+    </style>
+    <script>
+        function getParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+        
+        async function loadPurchases() {
+            let username = getParam("username");
+            
+            if (!username) {
+                username = prompt("Enter your username to view purchases:");
+                if (!username) {
+                    window.location = "index.html";
+                    return;
+                }
+            }
+            
+            document.getElementById("usernameDisplay").innerText = username;
+            
+            const resp = await fetch(`/purchases/buyer/${username}`);
+            const purchases = await resp.json();
+            
+            const container = document.getElementById("purchaseList");
+            container.innerHTML = '';
+            
+            if (purchases.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No purchases yet!</h3>
+                        <p>Browse the marketplace to find amazing projects.</p>
+                        <a href="marketplace.html" class="btn">Browse Marketplace</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            purchases.forEach(purchase => {
+                const statusClass = purchase.accessGranted ? 'status-completed' : 'status-pending';
+                const statusText = purchase.paymentStatus || 'PENDING';
+                
+                container.innerHTML += `
+                    <div class="purchase-card">
+                        <h3>${purchase.listing.title}</h3>
+                        <p><strong>Price:</strong> ₹${purchase.listing.price}</p>
+                        <p><strong>Category:</strong> ${purchase.listing.category || 'General'}</p>
+                        <span class="status-badge ${statusClass}">Status: ${statusText}</span>
+                        <span class="status-badge ${statusClass}">Access: ${purchase.accessGranted ? '✅ Granted' : '⏳ Pending'}</span>
+                        <p style="margin-top: 15px; color: #666;">
+                            ${purchase.accessGranted ? 
+                                'Access has been granted! You can download the project files below.' :
+                                'Waiting for seller to approve your purchase and grant access.'
+                            }
+                        </p>
+                        ${purchase.accessGranted && purchase.listing.projectFilePath ? 
+                            `<a href="${purchase.listing.projectFilePath}" class="btn" target="_blank">📥 Download Project Files</a>` :
+                            ''
+                        }
+                    </div>
+                `;
+            });
+        }
+        
+        window.onload = loadPurchases;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>📦 My Purchases - <span id="usernameDisplay"></span></h2>
+        <div id="purchaseList"></div>
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="marketplace.html" class="btn">Back to Marketplace</a>
+            <a href="index.html" class="btn" style="background: #666;">Home</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .project-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            transition: box-shadow 0.2s;
+        }
+        .project-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .project-header h3 {
+            margin: 0;
+            color: #333;
+        }
+        .price-tag {
+            background: #21808d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .category-badge {
+            display: inline-block;
+            background: #e8f5f7;
+            color: #21808d;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        .project-description {
+            color: #666;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+        .btn {
+            padding: 12px 24px;
+            background: #21808d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+        }
+        .btn:hover { background: #1a6873; }
+        .btn--primary { background: #21808d; }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+    </style>
+    <script>
+        async function loadProjects() {
+            const resp = await fetch('/listings');
+            const projects = await resp.json();
+            const container = document.getElementById('projectList');
+            
+            if (projects.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No projects available yet</h3>
+                        <p>Be the first to upload a project!</p>
+                        <a href="addProject.html" class="btn btn--primary">Upload Project</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            projects.forEach(project => {
+                container.innerHTML += `
+                    <div class="project-card">
+                        <div class="project-header">
+                            <h3>${project.title}</h3>
+                            <span class="price-tag">₹${project.price}</span>
+                        </div>
+                        <span class="category-badge">${project.category || 'General'}</span>
+                        <p class="project-description">${project.description}</p>
+                        ${project.demoVideoUrl ? `<p><a href="${project.demoVideoUrl}" target="_blank" style="color: #21808d;">🎥 Watch Demo Video</a></p>` : ''}
+                        <button class="btn btn--primary" onclick="buyProject(${project.id}, '${project.title}')">💰 Buy Now</button>
+                    </div>
+                `;
+            });
+        }
+        
+        async function buyProject(projectId, projectTitle) {
+            const buyerUsername = prompt("Enter your username to purchase this project:");
+            if (!buyerUsername) return;
+            
+            const confirmPurchase = confirm(`Buy "${projectTitle}"?\n\nAfter purchase, contact the seller for payment instructions.`);
+            if (!confirmPurchase) return;
+            
+            const purchase = {
+                buyer: { username: buyerUsername },
+                listing: { id: projectId },
+                transactionId: "TXN" + Date.now()
+            };
+            
+            const resp = await fetch('/purchases', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(purchase)
+            });
+            
+            if (resp.ok) {
+                alert("Purchase request submitted! Check 'My Purchases' to track status.");
+                window.location = `my-purchases.html?username=${buyerUsername}`;
+            } else {
+                alert("Purchase failed! Make sure your username exists.");
+            }
+        }
+        
+        window.onload = loadProjects;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <h2>🛒 Project Marketplace</h2>
+            <div>
+                <a href="addProject.html" class="btn btn--primary">+ Upload Your Project</a>
+                <a href="index.html" class="btn" style="background: #666;">Home</a>
+            </div>
+        </div>
+        <div id="projectList"></div>
+    </div>
+</body>
+</html>
